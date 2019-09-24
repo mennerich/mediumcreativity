@@ -17,6 +17,7 @@ libraryDependencies ++= Seq(
     "mysql" % "mysql-connector-java" % "5.1.34",
     "org.scalatestplus.play" %% "scalatestplus-play" % "3.0.0" % "test",
     "commons-codec" % "commons-codec" % "1.11",
+    "net.kaliber" %% "play-s3" % "9.0.0",
     specs2 % Test,
     guice,
     evolutions, 
