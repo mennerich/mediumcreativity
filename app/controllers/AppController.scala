@@ -21,7 +21,7 @@ class AppController @Inject()
 
   def index = Action.async { implicit request =>
     val works = Await.result(workRepo.all, 2.seconds)
-    Future(Ok(views.html.index(works.size)))
+    Future(Ok(views.html.index(works)))
   }
 
   def create: Action[AnyContent] = Action { implicit request => Ok(views.html.create(workForm)) }
