@@ -8,12 +8,9 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
 
-
-
 case class Work(id: Int, title: String, description: String, creationDate: Date, available: Boolean)
 
 class WorkRepo @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) {
-
 
   val dbConfig = dbConfigProvider.get[JdbcProfile]
   val db = dbConfig.db
@@ -31,5 +28,7 @@ class WorkRepo @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
   }
 
   def all: Future[List[Work]] = db.run(Works.to[List].result)
+
+  def create(work: Work): Future[Int] = db.run(Works += work)
 
 }

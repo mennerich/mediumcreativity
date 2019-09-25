@@ -1,0 +1,14 @@
+@(workForm: Form[models.Work])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@main("Add a work") {
+  <div class="container">
+    @helper.form(action = routes.AppController.submit()) {
+      <input type="hidden" name="id" value="0"/>
+      @helper.inputText(workForm("title"), 'class -> "form-control")
+      @helper.inputText(workForm("description"), 'class -> "form-control")
+      @helper.inputDate(workForm("creationDate"), 'class -> "form-control")
+      @helper.checkbox(workForm("available"), 'class -> "form-control")
+      <input type="submit">
+    }
+  </div>
+}
