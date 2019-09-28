@@ -2,7 +2,7 @@
 
 @main("Add a work") {
   <div class="container">
-    @helper.form(action = routes.AppController.submit()) {
+    @helper.form(action = routes.AdminController.submitWork()) {
       <input type="hidden" name="id" value="0"/>
       @helper.inputText(workForm("title"), 'class -> "form-control")
       @helper.inputText(workForm("description"), 'class -> "form-control")

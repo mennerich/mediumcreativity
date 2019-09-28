@@ -31,4 +31,6 @@ class WorkRepo @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
 
   def create(work: Work): Future[Int] = db.run(Works += work)
 
+  def findById(id: Int): Future[Option[Work]] = db.run(Works.filter(_.id === id).result.headOption)
+
 }

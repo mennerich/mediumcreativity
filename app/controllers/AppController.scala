@@ -19,24 +19,16 @@ class AppController @Inject()
   extends BaseController 
   with I18nSupport {
 
-  def index = Action.async { implicit request =>
+  def index: Action[AnyContent]  = Action.async { implicit request =>
     val works = Await.result(workRepo.all, 2.seconds)
     Future(Ok(views.html.index(works)))
   }
 
-  def create: Action[AnyContent] = Action { implicit request => Ok(views.html.create(workForm)) }
-
-  def submit() = Action.async { implicit request =>
-    workForm.bindFromRequest.fold(
-      formWithErrors => {
-        Future(Redirect(routes.AppController.create)) //add error to flash
-      },
-      form => {
-        val work = Work(form.id, form.title, form.description, form.creationDate, form.available)
-        workRepo.create(work).map(_ => Redirect(routes.AppController.index()))
-
-      }
-    )
+  def show(id: Int): Action[AnyContent] = Action { implicit request =>
+    Await.result(workRepo.findById(id), 5.seconds) match {
+      case Some(work) => Ok(views.html.show(work))
+      case _ => InternalServerError
+    }
   }
 
 }

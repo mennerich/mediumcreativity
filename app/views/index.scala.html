@@ -2,39 +2,36 @@
 
 @main("medium creativity") {
 
-<section class="jumbotron text-center">
-  <div class="container">
-    <h1 class="jumbotron-heading">Gallery</h1>
-    <p class="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don't simply skip over it entirely.</p>
-  </div>
-</section>
-
-<div class="album py-5 bg-light">
-  <div class="container">
+  <section class="jumbotron text-center">
+    <div class="container">
+      <h1 class="jumbotron-heading">Gallery</h1>
+      <p class="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don't simply skip over it entirely.</p>
+    </div>
+  </section>
+  <br>
+  <div class="row">
     @for(work <- works) {
-      <div class="row">
-        <div class="col-md-4">
-          <div class="card mb-4 box-shadow">
-            <img class="card-img-top" src="@routes.Assets.versioned("images/placeholder.png")">
-            <div class="card-body">
-              <p class="card-text"><strong>@work.title</strong></p>
-              <p class="card-text">@work.description</p>
-              <div class="d-flex justify-content-between align-items-center">
-                @if(work.available) {
-                  <div class="alert alert-info" role="alert">
-                    available
-                  </div>
-                } else {
-                  not available
-                }
-                <small class="text-muted">@work.creationDate</small>
-              </div>
+      <div class="col-md-4">
+        <div class="card mb-4 box-shadow">
+          <img class="card-img-top" src="@routes.Assets.versioned("images/test.jpg")">
+          <div class="card-body">
+            <p class="card-text">
+              <a href="@routes.AppController.show(work.id)">
+                <strong>@work.title</strong>
+              </a>
+            </p>
+            <p class="card-text">@work.description</p>
+            <div class="d-flex justify-content-between align-items-center">
+              @if(work.available) {
+                <div class="alert alert-info" role="alert">available</div>
+              } else {
+                <div class="alert alert-danger" role="alert">not available</div>
+              }
+              <small class="text-muted">@work.creationDate</small>
             </div>
           </div>
         </div>
       </div>
     }
   </div>
-</div>
-
 }
