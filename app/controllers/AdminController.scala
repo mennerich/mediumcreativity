@@ -32,10 +32,12 @@ class AdminController @Inject()
       },
       form => {
         val work = Work(form.id, form.title, form.description, form.creationDate, form.available)
-        workRepo.create(work).map(_ => Redirect(routes.AppController.index()))
-
+        val workId = Await.result(workRepo.create(work), 5.seconds)
+        Future(Redirect(routes.AdminController.addImage(workId)))
       }
     )
   }
+
+  def addImage(id: Int): Action[AnyContent] = Action { implicit request => Ok(views.html.admin.addImage(id)) }
 }
 
