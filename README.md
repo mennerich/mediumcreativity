@@ -1,2 +1,2 @@
-# mediumcreativity
-mediumcreativity website code
+# OrcStorm Gallery
+Gallery Application written in Play Framework
