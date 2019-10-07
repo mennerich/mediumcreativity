@@ -1,11 +1,11 @@
-@(work: models.Work)
+@(work: models.Work, image: Option[models.Image])
 
 @main(work.title) {
   <div class="row">
-    <div class="col">
-      <img class="card-img-top" src="@routes.Assets.versioned("images/test.jpg")">
+    <div class="col-6">
+      <img style="width:100%" src='@routes.Assets.versioned(s"images/gallery/${image.get.uuid}.${image.get.ext}")' />
     </div>
-    <div class="col">
+    <div class="col-6">
       <div class="row display-4">@work.title</div>
       <div class="row"><i>description:</i> @work.description</div>
       <div class="row"><i>date:</i> @work.creationDate</div>

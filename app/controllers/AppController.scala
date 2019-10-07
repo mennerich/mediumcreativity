@@ -1,12 +1,14 @@
 package controllers
 
 import forms.Forms._
+import helpers.AppHelper
 import javax.inject.Inject
 import models._
 import play.api.Configuration
 import play.api.i18n.I18nSupport
 import play.api.inject.ApplicationLifecycle
 import play.api.mvc._
+
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration._
 
@@ -15,19 +17,27 @@ class AppController @Inject()
   config: Configuration,
   lifecycle: ApplicationLifecycle,
   val controllerComponents: ControllerComponents,
-   workRepo: WorkRepo)
+   workRepo: WorkRepo, imageRepo: ImageRepo)
   extends BaseController 
-  with I18nSupport {
+  with I18nSupport
+  with AppHelper {
 
   def index: Action[AnyContent]  = Action.async { implicit request =>
     val works = Await.result(workRepo.all, 2.seconds)
-    Future(Ok(views.html.index(works)))
+    val images = Await.result(imageRepo.all, 2.seconds)
+    val imageMap = mapImages(images)
+
+    Future(Ok(views.html.index(works, imageMap)))
   }
 
   def show(id: Int): Action[AnyContent] = Action { implicit request =>
+
     Await.result(workRepo.findById(id), 5.seconds) match {
-      case Some(work) => Ok(views.html.show(work))
-      case _ => InternalServerError
+      case Some(work) => {
+        val image: Option[Image] = Await.result(imageRepo.findByWorkId(work.id), 5.seconds)
+        Ok(views.html.show(work, image))
+      }
+      case _ => InternalServerError("Work Not Found")
     }
   }
 

@@ -1,5 +1,6 @@
 package models
 
+import java.io.File
 import java.sql.Date
 
 import javax.inject.Inject
@@ -16,7 +17,7 @@ class WorkRepo @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
   val db = dbConfig.db
   import dbConfig.profile.api._
 
-  private[models] val Works = TableQuery[WorksTable]
+  private[models] val works = TableQuery[WorksTable]
 
   private[models] class WorksTable(tag: Tag) extends Table[Work](tag, "work") {
     def id = column[Int]("id", O.AutoInc, O.PrimaryKey)
@@ -27,10 +28,12 @@ class WorkRepo @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
     def * = (id, title, description, creationDate, available) <> (Work.tupled, Work.unapply)
   }
 
-  def all: Future[List[Work]] = db.run(Works.to[List].result)
+  def all: Future[List[Work]] = db.run(works.to[List].result)
 
-  def create(work: Work): Future[Int] = db.run(Works += work)
+  def create(work: Work): Future[Work] = {
+    db.run((works returning works.map(_.id) into ((work, id) => work.copy(id = id))) += work)
+  }
 
-  def findById(id: Int): Future[Option[Work]] = db.run(Works.filter(_.id === id).result.headOption)
+  def findById(id: Int): Future[Option[Work]] = db.run(works.filter(_.id === id).result.headOption)
 
 }

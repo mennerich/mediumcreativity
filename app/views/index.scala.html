@@ -1,37 +1,19 @@
-@(works: List[models.Work])
+@(works: List[models.Work], images: Map[Int, String])
 
 @main("medium creativity") {
+  @jumbotron()
+  <br />
+  @for((work, i) <- works.view.zipWithIndex) {
+    @if(i == 0) { <div class="row"> }
 
-  <section class="jumbotron text-center">
-    <div class="container">
-      <h1 class="jumbotron-heading">Gallery</h1>
-      <p class="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don't simply skip over it entirely.</p>
-    </div>
-  </section>
-  <br>
-  <div class="row">
-    @for(work <- works) {
-      <div class="col-md-4">
-        <div class="card mb-4 box-shadow">
-          <img class="card-img-top" src="@routes.Assets.versioned("images/test.jpg")">
-          <div class="card-body">
-            <p class="card-text">
-              <a href="@routes.AppController.show(work.id)">
-                <strong>@work.title</strong>
-              </a>
-            </p>
-            <p class="card-text">@work.description</p>
-            <div class="d-flex justify-content-between align-items-center">
-              @if(work.available) {
-                <div class="alert alert-info" role="alert">available</div>
-              } else {
-                <div class="alert alert-danger" role="alert">not available</div>
-              }
-              <small class="text-muted">@work.creationDate</small>
-            </div>
-          </div>
-        </div>
-      </div>
+    @defining(images(work.id)) { filename =>
+      @card(work, filename)
     }
-  </div>
+    @if(works.last == work) {
+      </div>
+    } else if(i != 0 && i % 3 == 0) {
+      </div>
+      <div class="row">
+    }
+  }
 }

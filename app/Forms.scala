@@ -3,6 +3,7 @@ package forms
 import models._
 import play.api.data.Form
 import play.api.data.Forms._
+import views.html.helper.inputFile
 
 object Forms {
   val workForm = Form(

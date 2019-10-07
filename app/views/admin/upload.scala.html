@@ -1,0 +1,28 @@
+@(work: models.Work)
+
+@main("Upload an Image") {
+    <div class="row">
+        <div class="col">
+            <div class="row display-4">@work.title</div>
+            <div class="row"><i>description:</i> @work.description</div>
+            <div class="row"><i>date:</i> @work.creationDate</div>
+            <div class="row">
+            @if(work.available) {
+                <div class="alert alert-info" role="alert">available</div>
+            } else {
+                <div class="alert alert-danger" role="alert">not available</div>
+            }
+            </div>
+        </div>
+        <div class="col">
+        @helper.form(action = routes.AdminController.upload, 'enctype -> "multipart/form-data") {
+            <input type="file" name="picture">
+            <input type="hidden" name="work_id" value="@work.id"/>
+            <p><input type="submit"></p>
+        }
+        </div>
+    </div>
+
+
+    </div>
+}

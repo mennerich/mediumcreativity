@@ -1,0 +1,23 @@
+@(work: models.Work, filename: String)
+
+<div class="col-md-4">
+    <div class="card mb-4 box-shadow">
+        <img class="card-img-top" src='@routes.Assets.versioned(s"images/gallery/$filename")' />
+        <div class="card-body">
+            <p class="card-text">
+                <a href="@routes.AppController.show(work.id)">
+                    <strong>@work.title.toString</strong>
+                </a>
+            </p>
+            <p class="card-text">@work.description</p>
+            <div class="d-flex justify-content-between align-items-center">
+                @if(work.available) {
+                    <div class="alert alert-info" role="alert">available</div>
+                } else {
+                    <div class="alert alert-danger" role="alert">not available</div>
+                }
+            <small class="text-muted">@work.creationDate</small>
+            </div>
+        </div>
+    </div>
+</div>
