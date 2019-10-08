@@ -22,17 +22,16 @@ class AdminController @Inject()
   lifecycle: ApplicationLifecycle,
   val controllerComponents: ControllerComponents,
   workRepo: WorkRepo,
-  imageRepo: ImageRepo)
+  imageRepo: ImageRepo,
+   userRepo: UserRepo)
   extends BaseController
     with I18nSupport {
 
-  def index: Action[AnyContent] = Action { implicit request =>
-    Ok(views.html.admin.index())
-  }
+  def index: Action[AnyContent] = Action { implicit request => Ok(views.html.admin.index()) }
 
   def createWork: Action[AnyContent] = Action { implicit request => Ok(views.html.admin.createWork(workForm)) }
 
-  def submitWork: Action[AnyContent] = Action { implicit request =>
+  def insertWork: Action[AnyContent] = Action { implicit request =>
     workForm.bindFromRequest.fold(
       formWithErrors => {
         Redirect(routes.AdminController.createWork()) //add error to flash
@@ -58,8 +57,6 @@ class AdminController @Inject()
     request.body
       .file("picture")
       .map { picture =>
-        // only get the last part of the filename
-        // otherwise someone can send a path like ../../home/foo/bar.txt to write to other files on the system
         val ext = FilenameUtils.getExtension(Paths.get(picture.filename).getFileName.toString)
         val uuid = UUID.randomUUID().toString
         val loc = new File(s"public/images/gallery/$uuid.$ext")
@@ -69,6 +66,22 @@ class AdminController @Inject()
         Redirect(routes.AppController.show(workId))
       }
       .getOrElse { InternalServerError("Internal Server Error") }
+  }
+
+  def setup: Action[AnyContent] = Action { implicit request =>
+    Ok(views.html.admin.setup(userForm))
+  }
+
+  def insertUser: Action[AnyContent] = Action { implicit request =>
+    userForm.bindFromRequest.fold(
+      formWithErrors => {
+        Redirect(routes.AppController.index())
+      },
+      form => {
+        val user = Await.result(userRepo.create(form), 5.seconds)
+        Redirect(routes.AdminController.index())
+      }
+    )
   }
 }
 

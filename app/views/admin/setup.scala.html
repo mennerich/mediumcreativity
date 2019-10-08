@@ -1,0 +1,18 @@
+@(userForm: Form[models.UserForm])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+
+@main("Create an Admin Account") {
+
+<div class="container">
+    @helper.form(action = routes.AdminController.insertUser()) {
+    @helper.inputText(userForm("email"), 'class -> "form-control")
+    @helper.inputText(userForm("password"), 'class -> "form-control")
+    @helper.inputText(userForm("nick"), 'class -> "form-control")
+    <div class="visually-hidden">
+        @helper.checkbox(userForm("isAdmin"), 'class -> "form-control", 'checked -> "checked")
+    </div>
+    <p>
+        <input type="submit">
+    </p>
+    }
+</div>
+}

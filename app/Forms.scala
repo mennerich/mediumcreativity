@@ -1,9 +1,8 @@
 package forms
 
-import models._
+import models.{Work, UserForm}
 import play.api.data.Form
 import play.api.data.Forms._
-import views.html.helper.inputFile
 
 object Forms {
   val workForm = Form(
@@ -14,4 +13,18 @@ object Forms {
       "creationDate" -> sqlDate,
       "available" -> boolean
     )(Work.apply)(Work.unapply))
+
+  val userForm = Form {
+    mapping(
+      "email" -> nonEmptyText,
+      "password" -> nonEmptyText,
+      "nick" -> nonEmptyText,
+      "isAdmin" -> boolean
+    ) (UserForm.apply)(UserForm.unapply)
+  }
+
 }
+
+
+
+

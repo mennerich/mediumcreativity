@@ -1,12 +1,15 @@
 GET         /assets/*file                   controllers.Assets.versioned(path="/public", file: Asset)
 
 GET         /                               controllers.AppController.index
+
 GET         /work/:id/show                  controllers.AppController.show(id: Int)
+
 GET         /admin                          controllers.AdminController.index
 GET         /admin/work/create              controllers.AdminController.createWork
-POST        /admin/work                     controllers.AdminController.submitWork
+POST        /admin/work                     controllers.AdminController.insertWork
 GET         /admin/work/:id/upload          controllers.AdminController.uploadImage(id: Int)
 POST        /admin/work/upload              controllers.AdminController.upload
-
+GET         /admin/setup                    controllers.AdminController.setup
+POST        /admin/user                     controllers.AdminController.insertUser
 
 
