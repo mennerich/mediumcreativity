@@ -21,10 +21,23 @@ class AdminController @Inject()
     workRepo: WorkRepo, imageRepo: ImageRepo, userRepo: UserRepo, sessionRepo: SessionRepo
   )
 
-  extends BaseController
-  with I18nSupport {
+  extends BaseController with I18nSupport {
 
-  def index: Action[AnyContent] = Action { implicit request => Ok(views.html.admin.index()) }
+  def index: Action[AnyContent] = Action { implicit request =>
+    userRepo.adminExists() match {
+      case true => {
+        request.session.get("gallery-session").map { sessionKey =>
+          sessionRepo.keyExists(sessionKey) match {
+            case true => Ok(views.html.admin.index())
+            case false => InternalServerError("ise")
+          }
+        }.getOrElse {
+          InternalServerError("ise")
+        }
+      }
+      case false => { Ok(views.html.admin.setup(userForm)) }
+    }
+  }
 
   def createWork: Action[AnyContent] = Action { implicit request => Ok(views.html.admin.createWork(workForm)) }
 
@@ -42,9 +55,18 @@ class AdminController @Inject()
   }
 
   def uploadImage(workId: Int): Action[AnyContent] = Action { implicit request =>
-    Await.result(workRepo.findById(workId), 5.seconds) match {
-      case Some(work) => Ok(views.html.admin.upload(work))
-      case None => InternalServerError("InternalServerError")
+    request.session.get("gallery-session").map { sessionKey =>
+      sessionRepo.keyExists(sessionKey) match {
+        case true => {
+          Await.result(workRepo.findById(workId), 5.seconds) match {
+            case Some(work) => Ok(views.html.admin.upload(work))
+            case None => InternalServerError("InternalServerError")
+          }
+        }
+        case false => InternalServerError("Invalid Key")
+      }
+    }.getOrElse {
+      InternalServerError("No Session Key")
     }
   }
 
@@ -65,25 +87,30 @@ class AdminController @Inject()
       .getOrElse { InternalServerError("Internal Server Error") }
   }
 
-  def setup: Action[AnyContent] = Action { implicit request =>
-    Ok(views.html.admin.setup(userForm))
-  }
-
   def insertUser: Action[AnyContent] = Action { implicit request =>
     request.session.get("gallery-session").map { sessionKey =>
       sessionRepo.keyExists(sessionKey) match {
-        userForm.bindFromRequest.fold(
-          formWithErrors => {
-            Redirect(routes.AppController.index())
-          },
-          form => {
-            val user = Await.result(userRepo.create(form), 5.seconds)
-            Redirect(routes.AdminController.index())
-
-
-      def login() = Action { implicit request =>
-        Ok(views.html.admin.login(authForm))
+        case true => {
+          userForm.bindFromRequest.fold(
+            formWithErrors => {
+              Redirect(routes.AppController.index())
+            },
+            form => {
+              val user = Await.result(userRepo.create(form), 5.seconds)
+              Redirect(routes.AdminController.index())
+            }
+          )
+        }
+        case false => InternalServerError("Invalid Key")
       }
+    }.getOrElse {
+      InternalServerError("No Session Key")
+    }
+  }
+
+  def login() = Action { implicit request =>
+    Ok(views.html.admin.login(authForm))
+  }
 
 }
 

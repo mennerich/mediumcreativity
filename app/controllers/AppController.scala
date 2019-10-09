@@ -17,7 +17,7 @@ class AppController @Inject()
   config: Configuration,
   lifecycle: ApplicationLifecycle,
   val controllerComponents: ControllerComponents,
-   workRepo: WorkRepo, imageRepo: ImageRepo, sessionRepo: SessionRepo)
+   workRepo: WorkRepo, imageRepo: ImageRepo, sessionRepo: SessionRepo, userRepo: UserRepo)
   extends BaseController 
   with I18nSupport
   with AppHelper {
@@ -26,12 +26,16 @@ class AppController @Inject()
     Future.successful(sessionRepo.deleteAll)
   }
 
-  def index: Action[AnyContent]  = Action.async { implicit request =>
-    val works = Await.result(workRepo.all, 2.seconds)
-    val images = Await.result(imageRepo.all, 2.seconds)
-    val imageMap = mapImages(images)
-
-    Future(Ok(views.html.index(works, imageMap)))
+  def index: Action[AnyContent]  = Action { implicit request =>
+    userRepo.adminExists() match {
+      case true => {
+        val works = Await.result(workRepo.all, 2.seconds)
+        val images = Await.result(imageRepo.all, 2.seconds)
+        val imageMap = mapImages(images)
+        Ok(views.html.index(works, imageMap))
+      }
+      case false => Ok(views.html.admin.setup(userForm))
+    }
   }
 
   def show(id: Int): Action[AnyContent] = Action { implicit request =>

@@ -3,12 +3,10 @@ package models
 import javax.inject.Inject
 import org.apache.commons.codec.digest.DigestUtils
 import play.api.db.slick.DatabaseConfigProvider
-import slick.dbio
-import slick.dbio.Effect.Read
 import slick.jdbc.JdbcProfile
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
 import scala.concurrent.Future
 import scala.util.Random
 
@@ -23,6 +21,19 @@ class UserRepo @Inject()(sessionRepo: SessionRepo, protected val dbConfigProvide
   import dbConfig.profile.api._
 
   private[models] val Users = TableQuery[UsersTable]
+
+  private[models] class UsersTable(tag: Tag) extends Table[User](tag, "user") {
+
+    def id = column[Int]("ID", O.AutoInc, O.PrimaryKey)
+    def email: Rep[String] = column[String]("email")
+    def hash: Rep[String] = column[String]("hash")
+    def salt: Rep[String] = column[String]("salt")
+    def nick: Rep[String] = column[String]("nick")
+    def isAdmin: Rep[Boolean] = column[Boolean]("is_admin")
+    def * = (id, email, hash, salt, nick, isAdmin) <> (User.tupled, User.unapply)
+
+  }
+
 
   def all: Future[List[User]] = db.run(Users.to[List].result)
 
@@ -39,6 +50,12 @@ class UserRepo @Inject()(sessionRepo: SessionRepo, protected val dbConfigProvide
       case None => None
     }
   }
+
+  def adminExists(): Boolean = {
+    Await.result(db.run(Users.filter(_.isAdmin === true).to[List].result), 5.seconds).nonEmpty
+  }
+
+
 
   def create(userForm: UserForm): Future[Int] = {
     val salt = Random.alphanumeric.take(10).mkString
@@ -62,9 +79,7 @@ class UserRepo @Inject()(sessionRepo: SessionRepo, protected val dbConfigProvide
     }
   }
 
-  def findByEmail(email: String): Future[Option[User]] = db.run(_findByEmail(email))
-
-  private def _findByEmail(email: String): DBIO[Option[User]] = Users.filter(_.email === email).result.headOption
+  def findByEmail(email: String): Future[Option[User]] = db.run(Users.filter(_.email === email).result.headOption)
 
   def authenticate(email: String, password: String): Option[String] = {
     val action = findByEmail(email)
@@ -85,16 +100,6 @@ class UserRepo @Inject()(sessionRepo: SessionRepo, protected val dbConfigProvide
     }
   }
 
-  private[models] class UsersTable(tag: Tag) extends Table[User](tag, "user") {
 
-    def id = column[Int]("ID", O.AutoInc, O.PrimaryKey)
-    def email: Rep[String] = column[String]("email")
-    def hash: Rep[String] = column[String]("hash")
-    def salt: Rep[String] = column[String]("salt")
-    def nick: Rep[String] = column[String]("nick")
-    def isAdmin: Rep[Boolean] = column[Boolean]("is_admin")
-    def * = (id, email, hash, salt, nick, isAdmin) <> (User.tupled, User.unapply)
-
-  }
 
 }
