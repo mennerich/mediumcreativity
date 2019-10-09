@@ -17,10 +17,14 @@ class AppController @Inject()
   config: Configuration,
   lifecycle: ApplicationLifecycle,
   val controllerComponents: ControllerComponents,
-   workRepo: WorkRepo, imageRepo: ImageRepo)
+   workRepo: WorkRepo, imageRepo: ImageRepo, sessionRepo: SessionRepo)
   extends BaseController 
   with I18nSupport
   with AppHelper {
+
+  lifecycle.addStopHook { () =>
+    Future.successful(sessionRepo.deleteAll)
+  }
 
   def index: Action[AnyContent]  = Action.async { implicit request =>
     val works = Await.result(workRepo.all, 2.seconds)

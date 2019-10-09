@@ -1,10 +1,11 @@
 package forms
 
-import models.{Work, UserForm}
+import models.{Work, UserForm, AuthRequest}
 import play.api.data.Form
 import play.api.data.Forms._
 
 object Forms {
+
   val workForm = Form(
     mapping(
       "id" -> number,
@@ -22,6 +23,13 @@ object Forms {
       "isAdmin" -> boolean
     ) (UserForm.apply)(UserForm.unapply)
   }
+
+  val authForm = Form(
+    mapping(
+      "email" -> nonEmptyText,
+      "password" -> nonEmptyText)
+    (AuthRequest.apply)(AuthRequest.unapply)
+  )
 
 }
 

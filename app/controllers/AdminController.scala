@@ -17,15 +17,12 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration._
 
 class AdminController @Inject()
-  (implicit ec: ExecutionContext,
-  config: Configuration,
-  lifecycle: ApplicationLifecycle,
-  val controllerComponents: ControllerComponents,
-  workRepo: WorkRepo,
-  imageRepo: ImageRepo,
-   userRepo: UserRepo)
+  (implicit ec: ExecutionContext, config: Configuration, lifecycle: ApplicationLifecycle, val controllerComponents: ControllerComponents,
+    workRepo: WorkRepo, imageRepo: ImageRepo, userRepo: UserRepo, sessionRepo: SessionRepo
+  )
+
   extends BaseController
-    with I18nSupport {
+  with I18nSupport {
 
   def index: Action[AnyContent] = Action { implicit request => Ok(views.html.admin.index()) }
 
@@ -73,15 +70,20 @@ class AdminController @Inject()
   }
 
   def insertUser: Action[AnyContent] = Action { implicit request =>
-    userForm.bindFromRequest.fold(
-      formWithErrors => {
-        Redirect(routes.AppController.index())
-      },
-      form => {
-        val user = Await.result(userRepo.create(form), 5.seconds)
-        Redirect(routes.AdminController.index())
+    request.session.get("gallery-session").map { sessionKey =>
+      sessionRepo.keyExists(sessionKey) match {
+        userForm.bindFromRequest.fold(
+          formWithErrors => {
+            Redirect(routes.AppController.index())
+          },
+          form => {
+            val user = Await.result(userRepo.create(form), 5.seconds)
+            Redirect(routes.AdminController.index())
+
+
+      def login() = Action { implicit request =>
+        Ok(views.html.admin.login(authForm))
       }
-    )
-  }
+
 }
 

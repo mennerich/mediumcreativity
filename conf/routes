@@ -10,6 +10,10 @@ POST        /admin/work                     controllers.AdminController.insertWo
 GET         /admin/work/:id/upload          controllers.AdminController.uploadImage(id: Int)
 POST        /admin/work/upload              controllers.AdminController.upload
 GET         /admin/setup                    controllers.AdminController.setup
+GET         /admin/login                    controllers.AdminController.login
 POST        /admin/user                     controllers.AdminController.insertUser
+
+
+POST        /auth                           controllers.SessionController.authenticate
 
 

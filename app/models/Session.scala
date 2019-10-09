@@ -11,6 +11,8 @@ import scala.concurrent.{ Await, Future }
 import scala.concurrent.duration.Duration
 import scala.util.Random
 
+case class AuthRequest(email: String, password: String)
+
 case class SessionKey(id: Int, sessionKey: String, userId: Int)
 
 class SessionRepo @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) {
