@@ -3,17 +3,11 @@
 @main("medium creativity") {
   @jumbotron()
   <br />
-  @for((work, i) <- works.view.zipWithIndex) {
-    @if(i == 0) { <div class="row"> }
-
-    @defining(images(work.id)) { filename =>
-      @card(work, filename)
+  <div class="row">
+    @for((work, i) <- works.view.zipWithIndex) {
+      @defining(images(work.id)) { filename =>
+        @card(work, filename)
+      }
     }
-    @if(works.last == work) {
-      </div>
-    } else if(i != 0 && i % 3 == 0) {
-      </div>
-      <div class="row">
-    }
-  }
+  </div>
 }

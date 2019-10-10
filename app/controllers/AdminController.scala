@@ -31,16 +31,12 @@ class AdminController @Inject()
   }
 
   def index: Action[AnyContent] = Action { implicit request =>
-    userRepo.adminExists() match {
-      case true => {
-        checkSession(request.session.get("gallery-session")) match {
-          case true => Ok(views.html.admin.index());
-          case false => InternalServerError("No Valid Session Key")
-        }
-      }
-      case false => { InternalServerError("No Admins exist redirect to entry")  }
+    checkSession(request.session.get("gallery-session")) match {
+      case true => Ok(views.html.admin.index());
+      case false => InternalServerError("No Valid Session Key")
     }
   }
+
 
   def createWork: Action[AnyContent] = Action { implicit request =>
     checkSession(request.session.get("gallery-session")) match {
@@ -131,7 +127,10 @@ class AdminController @Inject()
   }
 
   def login() = Action { implicit request =>
-    Ok(views.html.admin.login(authForm))
+    userRepo.adminExists() match {
+      case true => Ok(views.html.admin.login(authForm))
+      case false => Ok(views.html.admin.setup(userForm))
+    }
   }
 
 }

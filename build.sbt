@@ -1,4 +1,4 @@
-name := """mediumcreativity.com"""
+name := """orcstorm-gallery"""
 
 version := "0.1a"
 
