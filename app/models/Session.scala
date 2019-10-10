@@ -55,9 +55,9 @@ class SessionRepo @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
 
   private[models] class SessionKeysTable(tag: Tag) extends Table[SessionKey](tag, "SESSION") {
 
-    def id = column[Int]("ID", O.AutoInc, O.PrimaryKey)
-    def sessionKey = column[String]("SESSION_KEY")
-    def userId = column[Int]("USER_ID")
+    def id = column[Int]("id", O.AutoInc, O.PrimaryKey)
+    def sessionKey = column[String]("session")
+    def userId = column[Int]("user_id")
     def * = (id, sessionKey, userId) <> (SessionKey.tupled, SessionKey.unapply)
   }
 

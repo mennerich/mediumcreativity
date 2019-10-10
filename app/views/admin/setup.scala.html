@@ -2,8 +2,12 @@
 
 @main("Create an Admin Account") {
 
-<div class="container">
-    @helper.form(action = routes.AdminController.insertUser()) {
+  <div class="jumbotron">
+    <div class="lead">Orcstorm Gallery</div>
+    <p>please create your admin account</p>
+  </div>
+  <div class="container">
+    @helper.form(action = routes.AdminController.insertAdmin()) {
     @helper.inputText(userForm("email"), 'class -> "form-control")
     @helper.inputText(userForm("password"), 'class -> "form-control")
     @helper.inputText(userForm("nick"), 'class -> "form-control")
@@ -14,5 +18,5 @@
         <input type="submit">
     </p>
     }
-</div>
+  </div>
 }

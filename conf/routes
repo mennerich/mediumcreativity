@@ -1,7 +1,6 @@
 GET         /assets/*file                   controllers.Assets.versioned(path="/public", file: Asset)
 
 GET         /                               controllers.AppController.index
-
 GET         /work/:id/show                  controllers.AppController.show(id: Int)
 
 GET         /admin                          controllers.AdminController.index
@@ -11,7 +10,7 @@ GET         /admin/work/:id/upload          controllers.AdminController.uploadIm
 POST        /admin/work/upload              controllers.AdminController.upload
 GET         /admin/login                    controllers.AdminController.login
 POST        /admin/user                     controllers.AdminController.insertUser
-
+POST        /admin/                         controllers.AdminController.insertAdmin
 
 POST        /auth                           controllers.SessionController.authenticate
 

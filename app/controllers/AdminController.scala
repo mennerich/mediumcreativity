@@ -23,50 +23,60 @@ class AdminController @Inject()
 
   extends BaseController with I18nSupport {
 
-  def index: Action[AnyContent] = Action { implicit request =>
-    userRepo.adminExists() match {
-      case true => {
-        request.session.get("gallery-session").map { sessionKey =>
-          sessionRepo.keyExists(sessionKey) match {
-            case true => Ok(views.html.admin.index())
-            case false => InternalServerError("ise")
-          }
-        }.getOrElse {
-          InternalServerError("ise")
-        }
-      }
-      case false => { Ok(views.html.admin.setup(userForm)) }
+  private def checkSession(option: Option[String]): Boolean = {
+    option match {
+      case Some(sessionKey) => sessionRepo.keyExists(sessionKey)
+      case None => false
     }
   }
 
-  def createWork: Action[AnyContent] = Action { implicit request => Ok(views.html.admin.createWork(workForm)) }
+  def index: Action[AnyContent] = Action { implicit request =>
+    userRepo.adminExists() match {
+      case true => {
+        checkSession(request.session.get("gallery-session")) match {
+          case true => Ok(views.html.admin.index());
+          case false => InternalServerError("No Valid Session Key")
+        }
+      }
+      case false => { InternalServerError("No Admins exist redirect to entry")  }
+    }
+  }
+
+  def createWork: Action[AnyContent] = Action { implicit request =>
+    checkSession(request.session.get("gallery-session")) match {
+      case true => Ok(views.html.admin.createWork(workForm))
+      case false => InternalServerError("No Valid Session Key")
+    }
+  }
+
 
   def insertWork: Action[AnyContent] = Action { implicit request =>
-    workForm.bindFromRequest.fold(
-      formWithErrors => {
-        Redirect(routes.AdminController.createWork()) //add error to flash
-      },
-      form => {
-        val work = Work(form.id, form.title, form.description, form.creationDate, form.available)
-        val workId = Await.result(workRepo.create(work), 5.seconds).id
-        Redirect(routes.AdminController.uploadImage(workId))
+    checkSession(request.session.get("gallery-session")) match {
+      case true => {
+        workForm.bindFromRequest.fold(
+          formWithErrors => {
+            Redirect(routes.AdminController.createWork()) //add error to flash
+          },
+          form => {
+            val work = Work(form.id, form.title, form.description, form.creationDate, form.available)
+            val workId = Await.result(workRepo.create(work), 5.seconds).id
+            Redirect(routes.AdminController.uploadImage(workId))
+          }
+        )
       }
-    )
+      case false => InternalServerError("No Valid Session Key")
+    }
   }
 
   def uploadImage(workId: Int): Action[AnyContent] = Action { implicit request =>
-    request.session.get("gallery-session").map { sessionKey =>
-      sessionRepo.keyExists(sessionKey) match {
-        case true => {
-          Await.result(workRepo.findById(workId), 5.seconds) match {
-            case Some(work) => Ok(views.html.admin.upload(work))
-            case None => InternalServerError("InternalServerError")
-          }
+    checkSession(request.session.get("gallery-session")) match {
+      case true => {
+        Await.result(workRepo.findById(workId), 5.seconds) match {
+          case Some(work) => Ok(views.html.admin.upload(work))
+          case None => InternalServerError("InternalServerError")
         }
-        case false => InternalServerError("Invalid Key")
       }
-    }.getOrElse {
-      InternalServerError("No Session Key")
+      case false => InternalServerError("Invalid Key")
     }
   }
 
@@ -85,6 +95,18 @@ class AdminController @Inject()
         Redirect(routes.AppController.show(workId))
       }
       .getOrElse { InternalServerError("Internal Server Error") }
+  }
+
+  def insertAdmin: Action[AnyContent] = Action { implicit request =>
+    userForm.bindFromRequest.fold(
+      formWithErrors => {
+        Redirect(routes.AppController.index())
+      },
+      form => {
+        val user = Await.result(userRepo.create(form), 5.seconds)
+        Redirect(routes.AdminController.login())
+      }
+    )
   }
 
   def insertUser: Action[AnyContent] = Action { implicit request =>
