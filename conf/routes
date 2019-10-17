@@ -5,6 +5,8 @@ GET         /work/:id/show                  controllers.AppController.show(id: I
 
 GET         /admin                          controllers.AdminController.index
 GET         /admin/work/create              controllers.AdminController.createWork
+GET         /admin/work/delete              controllers.AdminController.deleteWork
+DELETE      /admin/work/:id                 controllers.AdminController.delete(id: Int)
 POST        /admin/work                     controllers.AdminController.insertWork
 GET         /admin/work/:id/upload          controllers.AdminController.uploadImage(id: Int)
 POST        /admin/work/upload              controllers.AdminController.upload

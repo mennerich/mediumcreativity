@@ -8,7 +8,8 @@ CREATE TABLE work (
     title text NOT NULL,
     description text NOT NULL,
     creation_date date NOT NULL,
-    available BOOLEAN NOT NULL
+    available BOOLEAN NOT NULL,
+    dimension_id integer
 );
 
 

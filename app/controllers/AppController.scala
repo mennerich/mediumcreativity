@@ -38,7 +38,8 @@ class AppController @Inject()
     Await.result(workRepo.findById(id), 5.seconds) match {
       case Some(work) => {
         val image: Option[Image] = Await.result(imageRepo.findByWorkId(work.id), 5.seconds)
-        Ok(views.html.show(work, image))
+        val dimensions: Option[Dimension] = Await.result(imageRepo.findDimensionById(work.dimensionId), 5.seconds)
+        Ok(views.html.show(work, image, dimensions))
       }
       case _ => InternalServerError("Work Not Found")
     }

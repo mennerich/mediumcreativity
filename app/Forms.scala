@@ -12,7 +12,8 @@ object Forms {
       "title" -> nonEmptyText,
       "description" -> nonEmptyText,
       "creationDate" -> sqlDate,
-      "available" -> boolean
+      "available" -> boolean,
+      "dimensionId" -> number
     )(Work.apply)(Work.unapply))
 
   val userForm = Form {

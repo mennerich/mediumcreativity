@@ -9,7 +9,7 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
 
-case class Work(id: Int, title: String, description: String, creationDate: Date, available: Boolean)
+case class Work(id: Int, title: String, description: String, creationDate: Date, available: Boolean, dimensionId: Int)
 
 class WorkRepo @Inject()(protected val dbConfigProvider: DatabaseConfigProvider) {
 
@@ -25,7 +25,8 @@ class WorkRepo @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
     def description = column[String]("description")
     def creationDate = column[Date]("creation_date")
     def available = column[Boolean]("available")
-    def * = (id, title, description, creationDate, available) <> (Work.tupled, Work.unapply)
+    def dimensionId: Rep[Int] = column[Int]("dimension_id")
+    def * = (id, title, description, creationDate, available, dimensionId) <> (Work.tupled, Work.unapply)
   }
 
   def all: Future[List[Work]] = db.run(works.to[List].result)
@@ -36,4 +37,5 @@ class WorkRepo @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)
 
   def findById(id: Int): Future[Option[Work]] = db.run(works.filter(_.id === id).result.headOption)
 
+  def delete(id: Int): Future[Int] = db.run(works.filter(_.id === id).delete)
 }

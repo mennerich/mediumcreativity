@@ -1,0 +1,35 @@
+@(works: List[models.Work], images: List[models.Image], dimensions: List[models.Dimension], imageMap: Map[Int, String])
+
+@main("Delete a Work") {
+  <table class="table" width="100%">
+    <thead>
+      <tr>
+        <th>id</th>
+        <th>title</th>
+        <th>dimensions</th>
+        <th>description</th>
+        <th>date</th>
+        <th width="10%">image</th>
+        <th/>
+      </tr>
+    </thead>
+      <tbody>
+        @for(work <- works) {
+          @defining(s"images/gallery/${imageMap(work.id)}") { img =>
+
+            <tr>
+              <td>@work.id</td>
+              <td>@work.title</td>
+              <td>@dimensions(work.dimensionId).dimension</td>
+              <td>@work.description</td>
+              <td>@work.creationDate</td>
+              <td><img style="width:100%" src='@routes.Assets.versioned(img)' /> </td>
+              <td>
+                <a href="@routes.AdminController.delete(work.id)" class="btn btn-danger">Delete</a>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+  </table>
+}
