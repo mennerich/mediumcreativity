@@ -1,6 +1,6 @@
-@(work: models.Work, image: Option[models.Image], dimensions: Option[models.Dimension])
+@(work: models.Work, image: Option[models.Image], dimensions: Option[models.Dimension], galleryConfig: models.Gallery.GalleryConfig, login: Boolean)
 
-@main(work.title) {
+@main(galleryConfig, login) {
   <div class="row">
     <div class="col-6">
       <img style="width:100%" src='@routes.Assets.versioned(s"images/gallery/${image.get.uuid}.${image.get.ext}")' />

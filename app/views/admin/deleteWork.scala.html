@@ -1,6 +1,6 @@
-@(works: List[models.Work], images: List[models.Image], dimensions: List[models.Dimension], imageMap: Map[Int, String])
+@(works: List[models.Work], images: List[models.Image], dimensions: List[models.Dimension], imageMap: Map[Int, String], galleryConfig: models.Gallery.GalleryConfig)
 
-@main("Delete a Work") {
+@main(galleryConfig, true) {
   <table class="table" width="100%">
     <thead>
       <tr>

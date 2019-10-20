@@ -1,4 +1,6 @@
-@main("admin") {
+@(galleryConfig: models.Gallery.GalleryConfig)
+
+@main(galleryConfig, true) {
     <div class="display-4">admin</div>
     <a href="@routes.AdminController.createWork()">Add A Work</a><br>
     <a href="@routes.AdminController.deleteWork()">Delete A Work</a>

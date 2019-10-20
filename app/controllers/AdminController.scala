@@ -2,10 +2,10 @@ package controllers
 
 import forms.Forms._
 import models._
+import models.Gallery._
 import java.io.File
 import java.nio.file.Paths
 import java.util.UUID
-
 import helpers.AppHelper
 import javax.inject.Inject
 import org.apache.commons.io.FilenameUtils
@@ -20,8 +20,9 @@ import scala.concurrent.duration._
 class AdminController @Inject()
   (implicit ec: ExecutionContext, config: Configuration, lifecycle: ApplicationLifecycle, val controllerComponents: ControllerComponents,
     workRepo: WorkRepo, imageRepo: ImageRepo, userRepo: UserRepo, sessionRepo: SessionRepo)
-
   extends BaseController with I18nSupport with AppHelper {
+
+  private val galleryConfig: GalleryConfig = getGalleryConfig(config)
 
   private def checkSession(option: Option[String]): Boolean = {
     option match {
@@ -32,7 +33,7 @@ class AdminController @Inject()
 
   def index: Action[AnyContent] = Action { implicit request =>
     checkSession(request.session.get("gallery-session")) match {
-      case true => Ok(views.html.admin.index());
+      case true => Ok(views.html.admin.index(galleryConfig));
       case false => InternalServerError("No Valid Session Key")
     }
   }
@@ -42,7 +43,7 @@ class AdminController @Inject()
     checkSession(request.session.get("gallery-session")) match {
       case true => {
         val dimensions = imageRepo.getDimensionsMap
-        Ok(views.html.admin.createWork(workForm, dimensions))
+        Ok(views.html.admin.createWork(workForm, dimensions, galleryConfig))
       }
 
       case false => InternalServerError("No Valid Session Key")
@@ -71,7 +72,7 @@ class AdminController @Inject()
     checkSession(request.session.get("gallery-session")) match {
       case true => {
         Await.result(workRepo.findById(workId), 5.seconds) match {
-          case Some(work) => Ok(views.html.admin.upload(work))
+          case Some(work) => Ok(views.html.admin.upload(work, galleryConfig))
           case None => InternalServerError("InternalServerError")
         }
       }
@@ -132,8 +133,8 @@ class AdminController @Inject()
 
   def login() = Action { implicit request =>
     userRepo.adminExists() match {
-      case true => Ok(views.html.admin.login(authForm))
-      case false => Ok(views.html.admin.setup(userForm))
+      case true => Ok(views.html.admin.login(authForm, galleryConfig))
+      case false => Ok(views.html.admin.setup(userForm, galleryConfig))
     }
   }
 
@@ -165,7 +166,7 @@ class AdminController @Inject()
           val dimensions = Await.result(imageRepo.allDimensions, 5.seconds)
           val images = Await.result(imageRepo.all, 2.seconds)
           val imageMap = mapImages(images)
-          Ok(views.html.admin.deleteWork(works, images, dimensions, imageMap))
+          Ok(views.html.admin.deleteWork(works, images, dimensions, imageMap, galleryConfig))
         }
         case false => InternalServerError("Invalid Key")
       }

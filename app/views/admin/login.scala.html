@@ -1,6 +1,6 @@
-@(authForm: Form[models.AuthRequest])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@(authForm: Form[models.AuthRequest], galleryConfig: models.Gallery.GalleryConfig)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
-@main("Login") {
+@main(galleryConfig, false) {
 
 <div class="container">
     @helper.form(action = routes.SessionController.authenticate) {

@@ -1,8 +1,9 @@
-@(title: String)(content: Html)
+@(galleryConfig: models.Gallery.GalleryConfig, login: Boolean)(content: Html)
+
 <!DOCTYPE html>
 <html>
   <head>
-    <title>@title</title>
+    <title>@galleryConfig.title</title>
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/gallery.css")" />
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/bootstrap.min.css")" />
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/album.css")" />
@@ -14,16 +15,15 @@
         <div class="row">
           <div class="col-sm-8 col-md-7 py-4">
             <h4 class="text-white">About</h4>
-            <p class="text-muted">Add some information about the album below, the author, or any other background context. Make it a few sentences long so folks can pick up some informative tidbits. Then, link them off to some social networking sites or contact information.</p>
+            <p class="text-muted">@galleryConfig.about</p>
           </div>
           <div class="col-sm-4 offset-md-1 py-4">
             <h4 class="text-white">Contact</h4>
             <ul class="list-unstyled">
-              <li><a href="#" class="text-white">Follow on Twitter</a></li>
-              <li><a href="#" class="text-white">Follow on Instagram</a></li>
-              <li><a href="#" class="text-white">Like on Facebook</a></li>
+              <li><a href="https://twitter.com/@galleryConfig.twitter" class="text-white">Follow on Twitter</a></li>
+              <li><a href="https://instaggram.com/@galleryConfig.instagram" class="text-white">Follow on Instagram</a></li>
+              <li><a href="https://facebook.com/@galleryConfig.facebook" class="text-white">Like on Facebook</a></li>
               <li><a href="#" class="text-white">Email me</a></li>
-              <li><a href="@routes.AdminController.login" class="text-white">Login</a></li>
             </ul>
           </div>
         </div>
@@ -32,7 +32,7 @@
     <div class="navbar navbar-dark bg-dark box-shadow">
       <div class="container d-flex justify-content-between">
         <a href="@routes.AppController.index" class="navbar-brand d-flex align-items-center">
-          <strong>medium creativity</strong>
+          <strong>@galleryConfig.title</strong>
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -50,7 +50,15 @@
         <p class="float-right">
           <a href="#">Back to top</a>
         </p>
-        <p>Powered by orcstorm gallery</p>
+        @if(login) {
+          <p>
+            <a href="@routes.AdminController.index">Admin</a>
+            <a href="#"> Logout</a>
+          </p>
+        } else {
+          <p><a href="@routes.AdminController.login">Login</a></p>
+        }
+        <p> powered by <a href="https://www.github.com/orcstorm/gallery">orcstorm gallery</a></p>
       </div>
     </footer>
 

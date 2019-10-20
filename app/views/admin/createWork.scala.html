@@ -1,6 +1,6 @@
-@(workForm: Form[models.Work], dimensions: List[Tuple2[String, String]])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@(workForm: Form[models.Work], dimensions: List[Tuple2[String, String]], galleryConfig: models.Gallery.GalleryConfig)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
-@main("Add a work") {
+@main(galleryConfig, true) {
   <div class="container">
     @helper.form(action = routes.AdminController.insertWork()) {
       <input type="hidden" name="id" value="0"/>

@@ -1,6 +1,6 @@
-@(userForm: Form[models.UserForm])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@(userForm: Form[models.UserForm], galleryConfig: models.Gallery.GalleryConfig)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
-@main("Create an Admin Account") {
+@main(galleryConfig, true) {
 
   <div class="jumbotron">
     <div class="lead">Orcstorm Gallery</div>

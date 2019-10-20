@@ -1,6 +1,6 @@
-@(work: models.Work)
+@(work: models.Work, galleryConfig: models.Gallery.GalleryConfig)
 
-@main("Upload an Image") {
+@main(galleryConfig, true) {
     <div class="row">
         <div class="col">
             <div class="row display-4">@work.title</div>

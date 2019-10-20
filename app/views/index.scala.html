@@ -1,7 +1,7 @@
-@(works: List[models.Work], images: Map[Int, String])
+@(works: List[models.Work], images: Map[Int, String], galleryConfig: models.Gallery.GalleryConfig, login: Boolean)
 
-@main("medium creativity") {
-  @jumbotron()
+@main(galleryConfig, login) {
+  @jumbotron(galleryConfig.description)
   <br />
   <div class="row">
     @for((work, i) <- works.view.zipWithIndex) {

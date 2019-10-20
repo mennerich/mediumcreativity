@@ -36,6 +36,7 @@ class ImageRepo @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
 
   def findByWorkId(workId: Int): Future[Option[Image]] = db.run(images.filter(_.workId === workId).result.headOption)
 
+  def delete(id: Int): Future[Int] = db.run(images.filter(_.id === id).delete)
 
   private[models] val dimensions = TableQuery[DimensionsTable]
 
@@ -86,6 +87,6 @@ class ImageRepo @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
 
   def findById(id: Int): Future[Option[Dimension]] = db.run(dimensions.filter(_.id === id).result.headOption)
 
-  def delete(id: Int): Future[Int] = db.run(images.filter(_.id === id).delete)
+
 
 }
