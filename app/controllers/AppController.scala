@@ -36,7 +36,6 @@ class AppController @Inject()
     }
   }
 
-
   def index: Action[AnyContent]  = Action { implicit request =>
     val works = Await.result(workRepo.all, 2.seconds)
     val images = Await.result(imageRepo.all, 2.seconds)

@@ -3,7 +3,7 @@
 @main(galleryConfig, login) {
   <div class="row">
     <div class="col-6">
-      <img style="width:100%" src='@(s"public/images/gallery/${image.get.uuid}.${image.get.ext}")' />
+      <img style="width:100%" src='@routes.Assets.versioned(s"images/${image.get.uuid}.${image.get.ext}")' />
     </div>
     <div class="col-6">
       <div class="row display-4">@work.title</div>

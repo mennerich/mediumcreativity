@@ -2,7 +2,7 @@
 
 <div class="col-md-4">
     <div class="card mb-4 box-shadow">
-        <img class="card-img-top" src='public/images/gallery/@filename")' />
+        <img class="card-img-top" src='@routes.Assets.versioned(s"images/$filename")' />
         <div class="card-body">
             <p class="card-text">
                 <a href="@routes.AppController.show(work.id)">

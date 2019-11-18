@@ -22,7 +22,7 @@ class AdminController @Inject()
     workRepo: WorkRepo, imageRepo: ImageRepo, userRepo: UserRepo, sessionRepo: SessionRepo)
   extends BaseController with I18nSupport with AppHelper {
 
-  private val galleryConfig: GalleryConfig = getGalleryConfig(config)
+  val galleryConfig: GalleryConfig = getGalleryConfig(config)
 
   private def checkSession(option: Option[String]): Boolean = {
     option match {
@@ -88,7 +88,7 @@ class AdminController @Inject()
       .map { picture =>
         val ext = FilenameUtils.getExtension(Paths.get(picture.filename).getFileName.toString)
         val uuid = UUID.randomUUID().toString
-        val loc = new File(s"public/images/gallery/$uuid.$ext")
+        val loc = new File(s"public/images/${uuid}.${ext}")
         picture.ref.moveTo(Paths.get(loc.getCanonicalPath), replace = true)
         val image = new Image(0, workId, 1, uuid, ext)
         Await.result(imageRepo.create(image), 5.seconds)
@@ -143,7 +143,7 @@ class AdminController @Inject()
       sessionRepo.keyExists(sessionKey) match {
         case true =>  {
           val image = Await.result(imageRepo.findByWorkId(workId), 5.seconds).get
-          val imageFile: File = new File("public/images/gallery/" + image.uuid + "." + image.ext)
+          val imageFile: File = new File(s"public/images/${image.uuid}.${image.ext}")
           imageFile.delete()
           //delete image record
           imageRepo.delete(image.id)
