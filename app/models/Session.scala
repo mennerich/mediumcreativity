@@ -53,7 +53,7 @@ class SessionRepo @Inject()(protected val dbConfigProvider: DatabaseConfigProvid
     Await.result(action, Duration.Inf)
   }
 
-  private[models] class SessionKeysTable(tag: Tag) extends Table[SessionKey](tag, "SESSION") {
+  private[models] class SessionKeysTable(tag: Tag) extends Table[SessionKey](tag, "session") {
 
     def id = column[Int]("id", O.AutoInc, O.PrimaryKey)
     def sessionKey = column[String]("session")
