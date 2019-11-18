@@ -6,7 +6,6 @@ import play.api.Configuration
 
 trait AppHelper {
 
-
   def mapImages(images: List[Image]): Map[Int, String] = {
     var map = Map[Int, String]()
     for(image <- images) {
